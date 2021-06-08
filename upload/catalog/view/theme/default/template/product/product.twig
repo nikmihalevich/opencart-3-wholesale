@@ -172,14 +172,14 @@
             <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"><i class="fa fa-exchange"></i></button>
           </div>
           <h1>{{ heading_title }}</h1>
-          <span>Розница</span>
+          <span>{{ text_retail }}</span>
 
           <label class="switch">
-            <input type="checkbox" name="wholesale_switcher" value="{{ filter_group.filter[0].filter_id }}" />
+            <input type="checkbox" name="wholesale_switcher" value="1" {% if wholesales == '1' %}checked{% endif %} />
             <span class="switch-slider round"></span>
           </label>
 
-          <span>Опт</span>
+          <span>{{ text_wholesale }}</span>
 
           <ul class="list-unstyled">
             {% if manufacturer %}
@@ -412,16 +412,11 @@
     {{ column_right }}</div>
 </div>
 <script>
-  $('input[name="wholesale_switcher"]').on('change', function () {
-      let wholesaleStatus = $(this).prop('checked') ? '1' : '0'
-      $.ajax({
-          url: 'index.php?route=product/product/getWholesaleData&product_id={{ product_id }}&wholesale_status=' + wholesaleStatus,
-          dataType: 'json',
-          success: function(json) {
-              $('.product-price').text(json.price)
-          }
-      });
-  })
+    $('input[name="wholesale_switcher"]').on('change', function () {
+        let wholesaleStatus = $(this).prop('checked') ? 1 : 0
+
+        location = '{{ wholesalesAction }}&wholesale_status=' + wholesaleStatus.toString();
+    })
 </script>
 <script type="text/javascript"><!--
 $('select[name=\'recurring_id\'], input[name="quantity"]').change(function(){

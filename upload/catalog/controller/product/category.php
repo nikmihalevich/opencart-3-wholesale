@@ -333,6 +333,20 @@ class ControllerProductCategory extends Controller {
 				);
 			}
 
+            $url = '';
+
+            if (isset($this->request->get['filter'])) {
+                $url .= '&filter=' . $this->request->get['filter'];
+            }
+
+            if (isset($this->request->get['sort'])) {
+                $url .= '&sort=' . $this->request->get['sort'];
+            }
+
+            if (isset($this->request->get['order'])) {
+                $url .= '&order=' . $this->request->get['order'];
+            }
+
 			$data['wholesalesAction'] = html_entity_decode($this->url->link('product/category', 'path=' . $this->request->get['path'] . $url));
 			$data['wholesales'] = $wholesale_status;
 

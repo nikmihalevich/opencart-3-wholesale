@@ -5,6 +5,12 @@ class ControllerProductProduct extends Controller {
 	public function index() {
 		$this->load->language('product/product');
 
+        if (isset($this->request->get['wholesale_status'])) {
+            $wholesale_status = (int)$this->request->get['wholesale_status'];
+        } else {
+            $wholesale_status = '0';
+        }
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -60,6 +66,10 @@ class ControllerProductProduct extends Controller {
 					$url .= '&limit=' . $this->request->get['limit'];
 				}
 
+                if (isset($this->request->get['wholesale_status'])) {
+                    $url .= '&wholesale_status=' . $this->request->get['wholesale_status'];
+                }
+
 				$data['breadcrumbs'][] = array(
 					'text' => $category_info['name'],
 					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url)
@@ -92,6 +102,10 @@ class ControllerProductProduct extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+            if (isset($this->request->get['wholesale_status'])) {
+                $url .= '&wholesale_status=' . $this->request->get['wholesale_status'];
+            }
 
 			$manufacturer_info = $this->model_catalog_manufacturer->getManufacturer($this->request->get['manufacturer_id']);
 
@@ -141,6 +155,10 @@ class ControllerProductProduct extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+            if (isset($this->request->get['wholesale_status'])) {
+                $url .= '&wholesale_status=' . $this->request->get['wholesale_status'];
+            }
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_search'),
@@ -209,6 +227,10 @@ class ControllerProductProduct extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+            if (isset($this->request->get['wholesale_status'])) {
+                $url .= '&wholesale_status=' . $this->request->get['wholesale_status'];
+            }
+
 			$data['breadcrumbs'][] = array(
 				'text' => $product_info['name'],
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
@@ -224,6 +246,9 @@ class ControllerProductProduct extends Controller {
 			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 			$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
+
+            $data['wholesalesAction'] = html_entity_decode($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']));
+            $data['wholesales'] = $wholesale_status;
 
 			$data['heading_title'] = $product_info['name'];
 
@@ -275,11 +300,19 @@ class ControllerProductProduct extends Controller {
 				);
 			}
 
-			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-			} else {
-				$data['price'] = false;
-			}
+			if ($wholesale_status == '0') {
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                } else {
+                    $data['price'] = false;
+                }
+            } else {
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $data['price'] = $this->currency->format($this->tax->calculate($product_info['wholesale_price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                } else {
+                    $data['price'] = false;
+                }
+            }
 
 			if ((float)$product_info['special']) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);

@@ -112,14 +112,14 @@
           <div class="form-group">
             <a href="{{ compare }}" id="compare-total" class="btn btn-link">{{ text_compare }}</a>
 
-            <span>Розница</span>
+            <span>{{ text_retail }}</span>
 
             <label class="switch">
               <input type="checkbox" name="wholesale_switcher" value="1" {% if wholesales == '1' %}checked{% endif %} />
               <span class="switch-slider round"></span>
             </label>
 
-            <span>Опт</span>
+            <span>{{ text_wholesale }}</span>
           </div>
         </div>
         <div class="col-md-4 col-xs-6">
